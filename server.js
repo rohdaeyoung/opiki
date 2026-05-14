@@ -7,26 +7,17 @@ dotenv.config();
 
 const app = express();
 
-app.use(
-  cors({
-    origin: "http://localhost:5173",
-  })
-);
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true,
+}));
 
 app.use(express.json());
 
-/* 테스트용 */
-app.get("/", (req, res) => {
-  res.send("서버 정상 실행중");
-});
-
-/* OpenAI */
 const openai = new OpenAI({
-  apiKey:
-    process.env.OPENAI_API_KEY,
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
-/* AI 요청 */
 app.post("/ai", async (req, res) => {
 
   try {
@@ -37,13 +28,19 @@ app.post("/ai", async (req, res) => {
     } = req.body;
 
     const prompt = `
-너는 청년 정책 추천 AI다.
+사용자 정보:
+
+이름: ${profile?.name || ""}
+나이: ${profile?.age || ""}
+지역: ${profile?.region || ""}
+소득분위: ${profile?.income || ""}
+학교: ${profile?.school || ""}
 
 질문:
 ${question}
 
-사용자:
-${JSON.stringify(profile)}
+위 정보를 기반으로
+대한민국 청년 정책을 추천해주세요.
 `;
 
     const completion =
@@ -52,54 +49,42 @@ ${JSON.stringify(profile)}
         model: "gpt-3.5-turbo",
 
         messages: [
-
           {
             role: "system",
             content:
-              "너는 청년 정책 추천 AI다.",
+              "너는 청년 정책 AI 상담사다.",
           },
-
           {
             role: "user",
             content: prompt,
           },
-
         ],
 
       });
 
-    const answer =
-      completion.choices[0]
-        .message.content;
-
     res.json({
-      answer,
+      reply:
+        completion.choices[0]
+          .message.content,
     });
 
   } catch (error) {
 
-    console.log("에러:");
-
     console.log(error);
 
     res.status(500).json({
-
-      answer:
+      reply:
         "AI 응답 생성 실패",
-
     });
 
   }
 
 });
 
-/* 서버 실행 */
-const PORT = 8000;
-
-app.listen(PORT, () => {
+app.listen(5000, () => {
 
   console.log(
-    `AI 서버 실행중 ${PORT}`
+    "AI 서버 실행중 5000"
   );
 
 });

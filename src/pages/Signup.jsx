@@ -6,125 +6,199 @@ function Signup() {
   const navigate = useNavigate();
 
   const [name, setName] = useState("");
-  const [id, setId] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSignup = () => {
+  const [age, setAge] = useState("");
+  const [region, setRegion] = useState("");
+  const [income, setIncome] = useState("");
+  const [school, setSchool] = useState("");
 
-    if (!name || !id || !password) {
-      alert("모든 정보를 입력해주세요.");
+  const signup = () => {
+
+    if (!name || !email || !password) {
+
+      alert("필수 정보를 입력해주세요.");
+
       return;
+
     }
 
-    const user = {
+    const profileData = {
+
       name,
-      id,
+
+      email,
+
       password,
+
+      age,
+
+      region,
+
+      income,
+
+      school,
+
     };
 
     localStorage.setItem(
-      "user",
-      JSON.stringify(user)
+      "profile",
+      JSON.stringify(profileData)
     );
 
-    alert("회원가입 완료!");
+    localStorage.setItem(
+      "isLogin",
+      "true"
+    );
 
-    navigate("/login");
+    alert("회원가입 완료");
+
+    navigate("/");
+
   };
 
   return (
+
     <div
       style={{
         minHeight: "100vh",
-        background: "#F7F9FC",
-        padding: "30px 24px",
+        background: "#F5F6FB",
+        maxWidth: "430px",
+        margin: "0 auto",
+        padding: "24px 20px 40px",
+        boxSizing: "border-box",
       }}
     >
 
       <h1
         style={{
-          fontSize: "32px",
-          fontWeight: "800",
+          fontSize: "34px",
+          fontWeight: "900",
           color: "#1F2A44",
-          marginBottom: "14px",
+          marginBottom: "30px",
         }}
       >
         회원가입
       </h1>
 
-      <p
+      <div
         style={{
-          color: "#A8B1C7",
-          marginBottom: "34px",
+          display: "flex",
+          flexDirection: "column",
+          gap: "14px",
         }}
       >
-        회원 정보를 입력해주세요
-      </p>
 
-      {/* 이름 */}
-      <input
-        placeholder="이름"
-        value={name}
-        onChange={(e) =>
-          setName(e.target.value)
-        }
-        style={inputStyle}
-      />
+        <input
+          placeholder="이름"
+          value={name}
+          onChange={(e) =>
+            setName(e.target.value)
+          }
+          style={inputStyle}
+        />
 
-      {/* 아이디 */}
-      <input
-        placeholder="아이디"
-        value={id}
-        onChange={(e) =>
-          setId(e.target.value)
-        }
-        style={inputStyle}
-      />
+        <input
+          placeholder="이메일"
+          value={email}
+          onChange={(e) =>
+            setEmail(e.target.value)
+          }
+          style={inputStyle}
+        />
 
-      {/* 비밀번호 */}
-      <input
-        type="password"
-        placeholder="비밀번호"
-        value={password}
-        onChange={(e) =>
-          setPassword(e.target.value)
-        }
-        style={inputStyle}
-      />
+        <input
+          type="password"
+          placeholder="비밀번호"
+          value={password}
+          onChange={(e) =>
+            setPassword(e.target.value)
+          }
+          style={inputStyle}
+        />
 
-      <button
-        onClick={handleSignup}
-        style={{
-          width: "100%",
-          height: "58px",
-          border: "none",
-          borderRadius: "18px",
-          background: "#5B8CFF",
-          color: "#fff",
-          fontSize: "18px",
-          fontWeight: "700",
-          marginTop: "20px",
-          cursor: "pointer",
-        }}
-      >
-        회원가입
-      </button>
+        <input
+          placeholder="나이"
+          value={age}
+          onChange={(e) =>
+            setAge(e.target.value)
+          }
+          style={inputStyle}
+        />
+
+        <input
+          placeholder="거주 지역"
+          value={region}
+          onChange={(e) =>
+            setRegion(e.target.value)
+          }
+          style={inputStyle}
+        />
+
+        <input
+          placeholder="소득 분위"
+          value={income}
+          onChange={(e) =>
+            setIncome(e.target.value)
+          }
+          style={inputStyle}
+        />
+
+        <input
+          placeholder="학교"
+          value={school}
+          onChange={(e) =>
+            setSchool(e.target.value)
+          }
+          style={inputStyle}
+        />
+
+        <button
+          onClick={signup}
+          style={{
+            width: "100%",
+            height: "56px",
+            border: "none",
+            borderRadius: "18px",
+            background:
+              "linear-gradient(135deg,#5B8CFF,#63E6BE)",
+            color: "white",
+            fontSize: "16px",
+            fontWeight: "700",
+            cursor: "pointer",
+            marginTop: "10px",
+          }}
+        >
+          회원가입 완료
+        </button>
+
+      </div>
 
     </div>
+
   );
+
 }
 
 const inputStyle = {
 
   width: "100%",
-  height: "58px",
-  borderRadius: "18px",
-  border: "1px solid #DDE3F3",
+
+  height: "54px",
+
+  border: "none",
+
+  borderRadius: "16px",
+
   padding: "0 18px",
-  fontSize: "16px",
-  marginBottom: "16px",
+
+  background: "white",
+
+  fontSize: "15px",
+
   outline: "none",
-  background: "#fff",
+
   boxSizing: "border-box",
 
 };

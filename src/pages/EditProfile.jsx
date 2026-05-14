@@ -1,58 +1,68 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import {
+  useEffect,
+  useState
+} from "react";
+
+import {
+  useNavigate
+} from "react-router-dom";
 
 function EditProfile() {
 
-  const navigate = useNavigate();
+  const navigate =
+    useNavigate();
 
   const [profile, setProfile]
     = useState({
+
       name: "",
-      id: "",
+
       age: "",
+
       region: "",
-      university: "",
+
       income: "",
+
+      school: "",
+
+      email: "",
+
     });
 
   useEffect(() => {
 
-    const user =
-      JSON.parse(localStorage.getItem("user"));
-
     const savedProfile =
-      JSON.parse(localStorage.getItem("profile"));
+      JSON.parse(
+        localStorage.getItem(
+          "profile"
+        )
+      );
 
-    setProfile({
-      name: user?.name || "",
-      id: user?.id || "",
-      age: savedProfile?.age || "",
-      region: savedProfile?.region || "",
-      university:
-        savedProfile?.university || "",
-      income:
-        savedProfile?.income || "",
-    });
+    if (savedProfile) {
+
+      setProfile(
+        savedProfile
+      );
+
+    }
 
   }, []);
 
-  const handleChange = (key, value) => {
-
-    setProfile({
-      ...profile,
-      [key]: value,
-    });
-
-  };
-
-  const handleSave = () => {
+  const saveProfile = () => {
 
     localStorage.setItem(
+
       "profile",
-      JSON.stringify(profile)
+
+      JSON.stringify(
+        profile
+      )
+
     );
 
-    alert("프로필 저장 완료!");
+    alert(
+      "프로필 수정 완료 😊"
+    );
 
     navigate("/profile");
 
@@ -63,191 +73,210 @@ function EditProfile() {
     <div
       style={{
         minHeight: "100vh",
-        background: "#F7F9FC",
-        padding: "28px 24px 120px",
+        background: "#F5F6FB",
+        maxWidth: "430px",
+        margin: "0 auto",
+
+        padding:
+          "24px 20px 160px",
+
+        boxSizing: "border-box",
       }}
     >
 
-      {/* 상단 */}
       <div
         style={{
           display: "flex",
           alignItems: "center",
-          gap: "14px",
-          marginBottom: "34px",
+          gap: "12px",
+          marginBottom: "28px",
         }}
       >
 
         <button
           onClick={() =>
-            navigate(-1)
+            navigate("/profile")
           }
           style={{
             border: "none",
-            background: "transparent",
-            fontSize: "32px",
+            background: "none",
+            fontSize: "24px",
             cursor: "pointer",
-            color: "#1F2A44",
           }}
         >
           ←
         </button>
 
-        <div
+        <h1
           style={{
-            fontSize: "38px",
-            fontWeight: "800",
+            fontSize: "30px",
+            fontWeight: "900",
             color: "#1F2A44",
           }}
         >
           프로필 수정
-        </div>
+        </h1>
 
       </div>
 
-      {/* 카드 */}
       <div
         style={{
-          background: "#fff",
-          borderRadius: "34px",
-          padding: "30px 24px",
-          border: "2px solid #E4E9F5",
+          background: "white",
+          borderRadius: "28px",
+          padding: "24px",
+          boxShadow:
+            "0 4px 14px rgba(0,0,0,0.05)",
         }}
       >
 
-        <InputBox
-          label="이름"
+        <input
           value={profile.name}
-          onChange={(value) =>
-            handleChange("name", value)
+          onChange={(e) =>
+            setProfile({
+
+              ...profile,
+
+              name:
+                e.target.value,
+
+            })
           }
+          placeholder="이름"
+          style={inputStyle}
         />
 
-        <InputBox
-          label="아이디"
-          value={profile.id}
-          disabled
+        <input
+          value={profile.email}
+          onChange={(e) =>
+            setProfile({
+
+              ...profile,
+
+              email:
+                e.target.value,
+
+            })
+          }
+          placeholder="이메일"
+          style={inputStyle}
         />
 
-        <InputBox
-          label="나이"
+        <input
           value={profile.age}
-          onChange={(value) =>
-            handleChange("age", value)
+          onChange={(e) =>
+            setProfile({
+
+              ...profile,
+
+              age:
+                e.target.value,
+
+            })
           }
+          placeholder="나이"
+          style={inputStyle}
         />
 
-        <InputBox
-          label="지역"
+        <input
           value={profile.region}
-          onChange={(value) =>
-            handleChange("region", value)
+          onChange={(e) =>
+            setProfile({
+
+              ...profile,
+
+              region:
+                e.target.value,
+
+            })
           }
+          placeholder="지역"
+          style={inputStyle}
         />
 
-        <InputBox
-          label="대학교"
-          value={profile.university}
-          onChange={(value) =>
-            handleChange("university", value)
-          }
-        />
-
-        <InputBox
-          label="소득 분위"
+        <input
           value={profile.income}
-          onChange={(value) =>
-            handleChange("income", value)
+          onChange={(e) =>
+            setProfile({
+
+              ...profile,
+
+              income:
+                e.target.value,
+
+            })
           }
+          placeholder="소득 분위"
+          style={inputStyle}
         />
 
-        {/* 비밀번호 */}
-        <InputBox
-          label="비밀번호"
-          value="********"
-          disabled
+        <input
+          value={profile.school}
+          onChange={(e) =>
+            setProfile({
+
+              ...profile,
+
+              school:
+                e.target.value,
+
+            })
+          }
+          placeholder="학교"
+          style={inputStyle}
         />
 
+        <button
+          onClick={saveProfile}
+          style={{
+            width: "100%",
+            height: "56px",
+            border: "none",
+            borderRadius: "18px",
+            background:
+              "linear-gradient(135deg,#5B8CFF,#63E6BE)",
+            color: "white",
+            fontSize: "16px",
+            fontWeight: "700",
+            cursor: "pointer",
+
+            marginTop: "20px",
+
+            marginBottom: "30px",
+          }}
+        >
+          저장하기
+        </button>
+
       </div>
-
-      {/* 저장 버튼 */}
-      <button
-        onClick={handleSave}
-        style={{
-          width: "100%",
-          height: "68px",
-          border: "none",
-          borderRadius: "24px",
-          background: "#5B8CFF",
-          color: "#fff",
-          fontSize: "24px",
-          fontWeight: "800",
-          marginTop: "28px",
-          cursor: "pointer",
-        }}
-      >
-        저장하기
-      </button>
-
-    </div>
-
-  );
-}
-
-function InputBox({
-  label,
-  value,
-  onChange,
-  disabled,
-}) {
-
-  return (
-
-    <div
-      style={{
-        marginBottom: "24px",
-      }}
-    >
-
-      <div
-        style={{
-          fontSize: "17px",
-          color: "#AAB2C8",
-          fontWeight: "700",
-          marginBottom: "10px",
-        }}
-      >
-        {label}
-      </div>
-
-      <input
-        value={value}
-        disabled={disabled}
-        onChange={(e) =>
-          onChange?.(e.target.value)
-        }
-        style={{
-          width: "100%",
-          height: "58px",
-          borderRadius: "18px",
-          border: "1px solid #E1E6F3",
-          padding: "0 18px",
-          fontSize: "18px",
-          fontWeight: "700",
-          color: "#1F2A44",
-          background:
-            disabled
-            ? "#F4F6FB"
-            : "#fff",
-          outline: "none",
-          boxSizing: "border-box",
-        }}
-      />
 
     </div>
 
   );
 
 }
+
+const inputStyle = {
+
+  width: "100%",
+
+  height: "54px",
+
+  border: "none",
+
+  borderRadius: "16px",
+
+  padding: "0 18px",
+
+  background: "#F5F6FB",
+
+  fontSize: "15px",
+
+  outline: "none",
+
+  boxSizing: "border-box",
+
+  marginBottom: "14px",
+
+};
 
 export default EditProfile;

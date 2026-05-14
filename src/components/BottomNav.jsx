@@ -1,198 +1,230 @@
 import {
-  FaHome,
-  FaRegCalendarAlt,
-  FaHistory,
-  FaUser,
-} from "react-icons/fa";
+  Link,
+  useLocation
+} from "react-router-dom";
 
-import { useNavigate } from "react-router-dom";
+import {
+  House,
+  CalendarDays,
+  History,
+  User,
+  Sparkles
+} from "lucide-react";
 
 function BottomNav() {
 
-  const navigate = useNavigate();
+  const location =
+    useLocation();
 
   return (
 
     <div
       style={{
+
         position: "fixed",
 
         bottom: "0",
 
         left: "50%",
-        transform: "translateX(-50%)",
+
+        transform:
+          "translateX(-50%)",
 
         width: "100%",
+
         maxWidth: "430px",
 
-        height: "84px",
+        height: "88px",
 
-        background: "#fff",
-
-        borderTop: "1px solid #DDE3F3",
+        background: "white",
 
         display: "flex",
 
-        justifyContent: "space-around",
+        justifyContent:
+          "space-around",
 
         alignItems: "center",
 
-        zIndex: "999",
+        borderTop:
+          "1px solid #EAEAEA",
+
+        zIndex: 9999,
+
       }}
     >
 
-      {/* 홈 */}
-      <div
-        onClick={() =>
-          navigate("/")
-        }
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          color: "#5B8CFF",
-          fontSize: "24px",
-          cursor: "pointer",
-        }}
+      <Link
+        to="/"
+        style={navStyle}
       >
-        <FaHome />
+
+        <House
+          size={28}
+          color={
+            location.pathname === "/"
+              ? "#5B8CFF"
+              : "#A0A8C3"
+          }
+        />
 
         <span
           style={{
-            fontSize: "13px",
-            marginTop: "4px",
+            color:
+              location.pathname === "/"
+                ? "#5B8CFF"
+                : "#A0A8C3",
+            fontSize: "14px",
             fontWeight: "700",
           }}
         >
           홈
         </span>
-      </div>
 
-      {/* 일정 */}
-      <div
-        onClick={() =>
-          navigate("/calendar")
-        }
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          color: "#A8B1C7",
-          fontSize: "24px",
-          cursor: "pointer",
-        }}
+      </Link>
+
+      <Link
+        to="/calendar"
+        style={navStyle}
       >
-        <FaRegCalendarAlt />
+
+        <CalendarDays
+          size={28}
+          color={
+            location.pathname ===
+            "/calendar"
+              ? "#5B8CFF"
+              : "#A0A8C3"
+          }
+        />
 
         <span
           style={{
-            fontSize: "13px",
-            marginTop: "4px",
+            color:
+              location.pathname ===
+              "/calendar"
+                ? "#5B8CFF"
+                : "#A0A8C3",
+            fontSize: "14px",
             fontWeight: "700",
           }}
         >
           일정
         </span>
-      </div>
 
-      {/* AI 버튼 */}
-      <div
-        onClick={() =>
-          navigate("/ai")
-        }
+      </Link>
+
+      <Link
+        to="/ai"
         style={{
-          width: "68px",
-          height: "68px",
-
-          borderRadius: "50%",
-
-          background:
-            "linear-gradient(135deg,#5B8CFF,#6EE7C8)",
-
-          position: "absolute",
-
-          top: "-22px",
-
-          left: "50%",
-
-          transform: "translateX(-50%)",
-
-          display: "flex",
-
-          justifyContent: "center",
-
-          alignItems: "center",
-
-          color: "#fff",
-
-          fontSize: "34px",
-
-          boxShadow:
-            "0 8px 24px rgba(91,140,255,0.25)",
-
-          cursor: "pointer",
+          position: "relative",
+          top: "-26px",
         }}
       >
-        ✦
-      </div>
 
-      {/* 기록 */}
-      <div
-        onClick={() =>
-          navigate("/favorite")
-        }
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          color: "#A8B1C7",
-          fontSize: "24px",
-          cursor: "pointer",
-        }}
+        <div
+          style={{
+            width: "74px",
+            height: "74px",
+            borderRadius: "50%",
+            background:
+              "linear-gradient(135deg,#5B8CFF,#63E6BE)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            boxShadow:
+              "0 10px 24px rgba(91,140,255,0.35)",
+          }}
+        >
+
+          <Sparkles
+            color="white"
+            size={34}
+          />
+
+        </div>
+
+      </Link>
+
+      <Link
+        to="/notification"
+        style={navStyle}
       >
-        <FaHistory />
+
+        <History
+          size={28}
+          color={
+            location.pathname ===
+            "/notification"
+              ? "#5B8CFF"
+              : "#A0A8C3"
+          }
+        />
 
         <span
           style={{
-            fontSize: "13px",
-            marginTop: "4px",
+            color:
+              location.pathname ===
+              "/notification"
+                ? "#5B8CFF"
+                : "#A0A8C3",
+            fontSize: "14px",
             fontWeight: "700",
           }}
         >
           기록
         </span>
-      </div>
 
-      {/* 프로필 */}
-      <div
-        onClick={() =>
-          navigate("/profile")
-        }
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          color: "#A8B1C7",
-          fontSize: "24px",
-          cursor: "pointer",
-        }}
+      </Link>
+
+      <Link
+        to="/profile"
+        style={navStyle}
       >
-        <FaUser />
+
+        <User
+          size={28}
+          color={
+            location.pathname ===
+            "/profile"
+              ? "#5B8CFF"
+              : "#A0A8C3"
+          }
+        />
 
         <span
           style={{
-            fontSize: "13px",
-            marginTop: "4px",
+            color:
+              location.pathname ===
+              "/profile"
+                ? "#5B8CFF"
+                : "#A0A8C3",
+            fontSize: "14px",
             fontWeight: "700",
           }}
         >
           프로필
         </span>
-      </div>
+
+      </Link>
 
     </div>
 
   );
+
 }
+
+const navStyle = {
+
+  display: "flex",
+
+  flexDirection: "column",
+
+  alignItems: "center",
+
+  gap: "4px",
+
+  textDecoration: "none",
+
+};
 
 export default BottomNav;

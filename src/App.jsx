@@ -1,158 +1,110 @@
-import Loading from "./pages/Loading";
-import AI from "./pages/AI";
+import "./App.css";
 
 import {
   BrowserRouter,
   Routes,
   Route,
-  Navigate,
+  useLocation,
 } from "react-router-dom";
 
-import "./App.css";
-
 import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
-import Favorite from "./pages/Favorite";
+import AI from "./pages/AI";
 import Calendar from "./pages/Calendar";
 import Profile from "./pages/Profile";
-import Detail from "./pages/Detail";
-import Notification from "./pages/Notification";
 import EditProfile from "./pages/EditProfile";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import History from "./pages/History";
+import Notification from "./pages/Notification";
+
+import BottomNav from "./components/BottomNav";
+
+function Layout() {
+
+  const location =
+    useLocation();
+
+  // BottomNav 숨길 페이지
+  const hideBottomNav =
+    location.pathname === "/ai" ||
+    location.pathname === "/login" ||
+    location.pathname === "/signup";
+
+  return (
+
+    <div className="app">
+
+      <Routes>
+
+        <Route
+          path="/"
+          element={<Home />}
+        />
+
+        <Route
+          path="/ai"
+          element={<AI />}
+        />
+
+        <Route
+          path="/calendar"
+          element={<Calendar />}
+        />
+
+        <Route
+          path="/profile"
+          element={<Profile />}
+        />
+
+        <Route
+          path="/edit-profile"
+          element={<EditProfile />}
+        />
+
+        <Route
+          path="/login"
+          element={<Login />}
+        />
+
+        <Route
+          path="/signup"
+          element={<Signup />}
+        />
+
+        <Route
+          path="/history"
+          element={<History />}
+        />
+
+        <Route
+          path="/notification"
+          element={<Notification />}
+        />
+
+      </Routes>
+
+      {!hideBottomNav && (
+        <BottomNav />
+      )}
+
+    </div>
+
+  );
+
+}
 
 function App() {
-
-  const isLogin =
-    localStorage.getItem("isLogin");
 
   return (
 
     <BrowserRouter>
 
-      <div className="app">
-
-        <Routes>
-
-          {/* 로그인 */}
-          <Route
-            path="/login"
-            element={<Login />}
-          />
-
-          {/* 회원가입 */}
-          <Route
-            path="/signup"
-            element={<Signup />}
-          />
-
-          {/* 홈 */}
-          <Route
-            path="/"
-            element={
-              isLogin
-              ?
-              <Home />
-              :
-              <Navigate to="/login" />
-            }
-          />
-
-          {/* 기록 */}
-          <Route
-            path="/favorite"
-            element={
-              isLogin
-              ?
-              <Favorite />
-              :
-              <Navigate to="/login" />
-            }
-          />
-
-          {/* 캘린더 */}
-          <Route
-            path="/calendar"
-            element={
-              isLogin
-              ?
-              <Calendar />
-              :
-              <Navigate to="/login" />
-            }
-          />
-
-          {/* 프로필 */}
-          <Route
-            path="/profile"
-            element={
-              isLogin
-              ?
-              <Profile />
-              :
-              <Navigate to="/login" />
-            }
-          />
-
-          {/* 상세 페이지 */}
-          <Route
-            path="/detail"
-            element={
-              isLogin
-              ?
-              <Detail />
-              :
-              <Navigate to="/login" />
-            }
-          />
-
-          {/* 알림 페이지 */}
-          <Route
-            path="/notification"
-            element={
-              isLogin
-              ?
-              <Notification />
-              :
-              <Navigate to="/login" />
-            }
-          />
-            <Route
-              path="/loading"
-              element={<Loading />}
-            />
-
-            {/* <Route
-                  path="/ai"
-                  element={
-                    isLogin
-                    ?
-                    <AI />
-                    :
-                    <Navigate to="/login" />
-                  }
-                />
-         */}
-
-         <Route
-            path="/ai"
-            element={<AI />}
-          />
-
-          <Route
-            path="/edit-profile"
-            element={<EditProfile />}
-          />
-        
-        
-        </Routes>
-
-
-
-      </div>
+      <Layout />
 
     </BrowserRouter>
 
   );
+
 }
 
 export default App;
