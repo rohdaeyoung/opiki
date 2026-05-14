@@ -1,0 +1,43 @@
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  background:#111827;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  display:flex;
+  justify-content:center;
+}
+
+#root{
+  width:100%;
+  display:flex;
+  justify-content:center;
+}
+
+.app{
+
+  width:100%;
+  max-width:430px;
+
+  min-height:100vh;
+
+  background:#F7F9FC;
+
+  position:relative;
+
+  overflow:hidden;
+
+  border-radius:40px;
+
+  box-shadow:
+    0 0 40px rgba(0,0,0,0.35);
+
+}
