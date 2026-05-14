@@ -25,7 +25,7 @@ function Chat() {
       text: input,
     };
 
-    let aiReply = "";
+    let aiReply;
 
     if (input.includes("주거")) {
 

@@ -1,284 +1,79 @@
-import BottomNav from "../components/BottomNav";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import PhoneTop from "../components/PhoneTop";
+import benefits from "../data/benefits";
 
 export default function Calendar() {
-
-  const favorites =
-    JSON.parse(localStorage.getItem("favorites")) || [];
-
-  const days = Array.from(
-    { length: 31 },
-    (_, i) => i + 1
-  );
-
-  // 즐겨찾기 날짜 추출
-  const markedDays = [];
-
-  favorites.forEach((item) => {
-
-    if (!item.date) return;
-
-    const parts =
-      item.date.split("~");
-
-    if (!parts[0]) return;
-
-    const start =
-      parts[0].trim();
-
-    const day =
-      Number(start.split(".")[2]);
-
-    if (!isNaN(day)) {
-      markedDays.push(day);
-    }
-
-  });
+  const navigate = useNavigate();
+  const days = Array.from({ length: 31 }, (_, index) => index + 1);
+  const marked = [10, 14, 19];
+  const todayItems = benefits.filter((item) => ["traffic", "medical-ra", "closed-scholarship"].includes(item.id));
 
   return (
-
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "#F7F9FC",
-        padding: "24px 20px 140px",
-        overflowX: "hidden",
-      }}
-    >
-
-      {/* 제목 */}
-      <div
-        style={{
-          fontSize: "52px",
-          fontWeight: "900",
-          color: "#1F2A52",
-          lineHeight: "1",
-          marginBottom: "12px",
-        }}
-      >
-        일정
+    <main className="screen">
+      <PhoneTop />
+      <div className="topbar">
+        <button className="icon-button" onClick={() => navigate(-1)} type="button">
+          <ChevronLeft size={26} />
+        </button>
+        <h1 className="topbar-title">캘린더</h1>
+        <span />
       </div>
 
-      {/* 설명 */}
-      <div
-        style={{
-          color: "#AAB3CC",
-          fontSize: "18px",
-          fontWeight: "700",
-          marginBottom: "24px",
-        }}
-      >
-        저장한 혜택 일정 확인
-      </div>
-
-      {/* 캘린더 */}
-      <div
-        style={{
-          width: "100%",
-          background: "#fff",
-          borderRadius: "34px",
-          padding: "18px 14px",
-          border: "2px solid #E6ECF5",
-          marginBottom: "28px",
-          boxSizing: "border-box",
-        }}
-      >
-
-        {/* 월 */}
-        <div
-          style={{
-            fontSize: "28px",
-            fontWeight: "900",
-            color: "#1F2A52",
-            marginBottom: "20px",
-            paddingLeft: "8px",
-          }}
-        >
-          2026년 5월
+      <section style={{ padding: "12px 16px 0" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 28, marginBottom: 18 }}>
+          <ChevronLeft color="#b5bed0" size={20} />
+          <h2 style={{ margin: 0, fontSize: 20, fontWeight: 900 }}>2026년 5월</h2>
+          <ChevronRight color="#b5bed0" size={20} />
         </div>
-
-        {/* 요일 */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(7, 1fr)",
-            marginBottom: "14px",
-            textAlign: "center",
-          }}
-        >
-
-          {["일","월","화","수","목","금","토"].map((day) => (
-
-            <div
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", textAlign: "center", color: "#c3cad7", fontSize: 11, fontWeight: 900, marginBottom: 12 }}>
+          {["SAN", "MON", "TUE", "WED", "THU", "FRI", "SAT"].map((day) => (
+            <span key={day}>{day}</span>
+          ))}
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", rowGap: 18, textAlign: "center" }}>
+          {days.map((day) => (
+            <button
               key={day}
               style={{
-                color: "#AAB3CC",
-                fontWeight: "700",
-                fontSize: "14px",
+                justifySelf: "center",
+                width: 30,
+                height: 30,
+                border: 0,
+                borderRadius: "50%",
+                background: day === 19 ? "#5b8cff" : "transparent",
+                color: day === 19 ? "#fff" : "#59657d",
+                fontSize: 18,
+                fontWeight: 900,
               }}
+              type="button"
             >
               {day}
-            </div>
-
+              {marked.includes(day) && day !== 19 ? <span style={{ display: "block", height: 2, background: "#ff9658", marginTop: 4 }} /> : null}
+            </button>
           ))}
-
         </div>
+      </section>
 
-        {/* 날짜 */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(7, 1fr)",
-            justifyItems: "center",
-            rowGap: "12px",
-          }}
-        >
-
-          {days.map((day) => {
-
-            const marked =
-              markedDays.includes(day);
-
-            return (
-
-              <div
-                key={day}
-                style={{
-                  width: "44px",
-                  height: "44px",
-                  borderRadius: "50%",
-                  background:
-                    marked
-                    ?
-                    "linear-gradient(135deg,#5D85F7,#64DCC8)"
-                    :
-                    "#F3F5FA",
-                  color:
-                    marked
-                    ?
-                    "#fff"
-                    :
-                    "#1F2A52",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontWeight: "800",
-                  fontSize: "18px",
-                  flexShrink: 0,
-                }}
-              >
-                {day}
-              </div>
-
-            );
-
-          })}
-
+      <section style={{ marginTop: 28 }}>
+        <h2 className="section-title" style={{ marginBottom: 12 }}>
+          오늘
+        </h2>
+        <div className="benefit-list">
+          {todayItems.map((item) => (
+            <button className={`benefit-card ${item.status === "orange" ? "orange-date" : ""}`} key={item.id} onClick={() => navigate(`/detail/${item.id}`)} type="button">
+              <span style={{ width: 32, height: 32, borderRadius: "50%", background: "#ffe1f0", display: "grid", placeItems: "center" }}>⌂</span>
+              <span>
+                <h3 className="benefit-title">{item.title}</h3>
+                <p className="benefit-desc">{item.desc}</p>
+                <p className="benefit-date-label">신청 기간</p>
+                <p className="benefit-date">{item.date}</p>
+              </span>
+              <span className={`badge ${item.status}`}>{item.deadline === "D-3" ? "D-0" : item.deadline}</span>
+            </button>
+          ))}
         </div>
-
-      </div>
-
-      {/* 저장된 일정 */}
-      <div
-        style={{
-          fontSize: "42px",
-          fontWeight: "900",
-          color: "#1F2A52",
-          marginBottom: "20px",
-        }}
-      >
-        저장된 일정
-      </div>
-
-      {favorites.map((item, index) => (
-
-        <div
-          key={index}
-          style={{
-            background: "#fff",
-            borderRadius: "32px",
-            padding: "24px",
-            border: "2px solid #E6ECF5",
-            marginBottom: "18px",
-          }}
-        >
-
-          {/* 제목 */}
-          <div
-            style={{
-              fontSize: "28px",
-              fontWeight: "900",
-              color: "#1F2A52",
-              marginBottom: "16px",
-              lineHeight: "1.3",
-            }}
-          >
-            {item.title}
-          </div>
-
-          {/* 신청기간 */}
-          <div
-            style={{
-              color: "#AAB3CC",
-              fontSize: "18px",
-              fontWeight: "700",
-              marginBottom: "10px",
-            }}
-          >
-            신청 기간
-          </div>
-
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "flex-end",
-              gap: "10px",
-            }}
-          >
-
-            {/* 날짜 */}
-            <div
-              style={{
-                color: "#F79245",
-                fontSize: "18px",
-                fontWeight: "800",
-                lineHeight: "1.5",
-              }}
-            >
-              {item.date}
-            </div>
-
-            {/* D-Day */}
-            <div
-              style={{
-                minWidth: "88px",
-                height: "48px",
-                borderRadius: "999px",
-                border: "3px solid #F79245",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                color: "#F79245",
-                fontWeight: "900",
-                fontSize: "18px",
-                padding: "0 12px",
-                background: "#fff",
-                flexShrink: 0,
-              }}
-            >
-              {item.dday}
-            </div>
-
-          </div>
-
-        </div>
-
-      ))}
-
-      <BottomNav />
-
-    </div>
-
+      </section>
+    </main>
   );
-
 }

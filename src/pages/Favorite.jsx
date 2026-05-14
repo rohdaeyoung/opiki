@@ -1,277 +1,105 @@
-import BottomNav from "../components/BottomNav";
+import { ChevronLeft } from "lucide-react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import BenefitCard from "../components/BenefitCard";
+import PhoneTop from "../components/PhoneTop";
+import benefits from "../data/benefits";
+import { getFavoriteIds, getProfile, toggleFavoriteId } from "../utils/storage";
 
 export default function Favorite() {
+  const navigate = useNavigate();
+  const profile = getProfile();
+  const [favoriteIds, setFavoriteIds] = useState(getFavoriteIds());
+  const favorites = benefits.filter((item) => favoriteIds.includes(item.id));
+  const top3 = benefits.slice(3, 6).concat(benefits.slice(0, 1)).slice(0, 3);
 
-  const favorites =
-    JSON.parse(localStorage.getItem("favorites")) || [];
-
-  const profile =
-    JSON.parse(localStorage.getItem("profile")) || {};
+  const onToggleFavorite = (id) => setFavoriteIds(toggleFavoriteId(id));
 
   return (
-
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "#F7F9FC",
-        padding: "24px 20px 140px",
-      }}
-    >
-
-      {/* 제목 */}
-      <div
-        style={{
-          fontSize: "54px",
-          fontWeight: "900",
-          color: "#1F2A52",
-          marginBottom: "10px",
-          lineHeight: "1",
-        }}
-      >
-        기록
+    <main className="screen">
+      <PhoneTop />
+      <div className="topbar">
+        <button className="icon-button" onClick={() => navigate(-1)} type="button">
+          <ChevronLeft size={26} />
+        </button>
+        <h1 className="topbar-title">즐겨찾기</h1>
+        <span />
       </div>
 
-      {/* 설명 */}
-      <div
-        style={{
-          fontSize: "18px",
-          color: "#AAB3CC",
-          fontWeight: "700",
-          marginBottom: "26px",
-        }}
-      >
-        AI 기반 관심 혜택 분석
-      </div>
-
-      {/* AI 분석 카드 */}
-      <div
-        style={{
-          background: "linear-gradient(135deg,#5D85F7,#64DCC8)",
-          borderRadius: "34px",
-          padding: "28px",
-          marginBottom: "26px",
-          color: "#fff",
-        }}
-      >
-
-        <div
-          style={{
-            fontSize: "30px",
-            fontWeight: "900",
-            marginBottom: "20px",
-            lineHeight: "1.4",
-          }}
-        >
-          AI 성향 분석
+      <section className="summary-card" style={{ marginTop: 8 }}>
+        <div className="section-head" style={{ margin: "0 0 12px" }}>
+          <h2 className="section-title">내 상황 요약</h2>
+          <button className="muted-link" onClick={() => navigate("/edit-profile")} type="button">
+            수정하기 ›
+          </button>
         </div>
-
-        <div
-          style={{
-            fontSize: "17px",
-            lineHeight: "1.9",
-            fontWeight: "700",
-            opacity: 0.95,
-          }}
-        >
-          <div>
-            나이 : {profile.age || "-"}세
+        {[
+          ["나이", profile.age],
+          ["거주지역", profile.region],
+          ["소득기준", profile.income],
+          ["학력", profile.education],
+          ["전공", profile.major],
+          ["취업상태", profile.job],
+          ["특화분야", profile.special],
+          ["추가사항", profile.extra],
+        ].map(([label, value]) => (
+          <div className="summary-row" key={label}>
+            <span>{label}</span>
+            <strong>{value || "-"}</strong>
           </div>
+        ))}
+      </section>
 
-          <div>
-            지역 : {profile.region || "-"}
-          </div>
-
-          <div>
-            소득 분위 : {profile.income || "-"}
-          </div>
-
-          <div>
-            관심 분야 : 생활 지원 · 청년 혜택
-          </div>
+      <section>
+        <div className="section-head">
+          <h2 className="section-title" style={{ color: "#66d7c7" }}>
+            AI 추천 혜택 TOP3
+          </h2>
+          <button className="muted-link" type="button">
+            추천 기준 ›
+          </button>
         </div>
-
-      </div>
-
-      {/* 추천 섹션 */}
-      <div
-        style={{
-          fontSize: "38px",
-          fontWeight: "900",
-          color: "#1F2A52",
-          marginBottom: "20px",
-          lineHeight: "1.2",
-        }}
-      >
-        AI 추천 혜택 TOP3
-      </div>
-
-      {/* 추천 카드 */}
-      <div
-        style={{
-          background: "#fff",
-          borderRadius: "30px",
-          padding: "24px",
-          border: "2px solid #E6ECF5",
-          marginBottom: "30px",
-        }}
-      >
-
-        <div
-          style={{
-            fontSize: "28px",
-            fontWeight: "900",
-            color: "#1F2A52",
-            marginBottom: "14px",
-            lineHeight: "1.4",
-          }}
-        >
-          청년 교통비 지원사업
-        </div>
-
-        <div
-          style={{
-            color: "#AAB3CC",
-            fontSize: "18px",
-            fontWeight: "700",
-            marginBottom: "20px",
-          }}
-        >
-          청년 생활비 절감 추천 혜택
-        </div>
-
-        <div
-          style={{
-            color: "#F79245",
-            fontSize: "18px",
-            fontWeight: "800",
-          }}
-        >
-          신청 기간 : 2026.05.12 ~ 2026.05.15
-        </div>
-
-      </div>
-
-      {/* 저장된 혜택 */}
-      <div
-        style={{
-          fontSize: "38px",
-          fontWeight: "900",
-          color: "#1F2A52",
-          marginBottom: "22px",
-          lineHeight: "1.2",
-        }}
-      >
-        저장한 혜택
-      </div>
-
-      {favorites.length === 0 ? (
-
-        <div
-          style={{
-            background: "#fff",
-            borderRadius: "28px",
-            padding: "32px 24px",
-            border: "2px solid #E6ECF5",
-            textAlign: "center",
-            color: "#AAB3CC",
-            fontSize: "18px",
-            fontWeight: "700",
-          }}
-        >
-          아직 저장한 혜택이 없습니다
-        </div>
-
-      ) : (
-
-        favorites.map((item, index) => (
-
-          <div
-            key={index}
-            style={{
-              background: "#fff",
-              borderRadius: "30px",
-              padding: "24px",
-              border: "2px solid #E6ECF5",
-              marginBottom: "18px",
-            }}
-          >
-
-            {/* 제목 */}
+        <div className="panel" style={{ padding: "8px 12px" }}>
+          {top3.map((item, index) => (
             <div
+              key={item.id}
+              onClick={() => navigate(`/detail/${item.id}`)}
               style={{
-                fontSize: "28px",
-                fontWeight: "900",
-                color: "#1F2A52",
-                marginBottom: "14px",
-                lineHeight: "1.4",
-              }}
-            >
-              {item.title}
-            </div>
-
-            {/* 설명 */}
-            <div
-              style={{
-                color: "#AAB3CC",
-                fontSize: "18px",
-                fontWeight: "700",
-                marginBottom: "18px",
-              }}
-            >
-              {item.desc}
-            </div>
-
-            {/* 날짜 + DDAY */}
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
+                display: "grid",
+                gridTemplateColumns: "30px 1fr 45px",
                 alignItems: "center",
-                gap: "10px",
+                gap: 8,
+                padding: "9px 0",
+                borderBottom: index === top3.length - 1 ? 0 : "1px solid #edf1f7",
+                cursor: "pointer",
               }}
             >
-
-              <div
-                style={{
-                  color: "#F79245",
-                  fontSize: "18px",
-                  fontWeight: "800",
-                  lineHeight: "1.5",
-                }}
-              >
-                {item.date}
-              </div>
-
-              <div
-                style={{
-                  minWidth: "88px",
-                  height: "46px",
-                  borderRadius: "999px",
-                  border: "3px solid #F79245",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  color: "#F79245",
-                  fontWeight: "900",
-                  fontSize: "18px",
-                  background: "#fff",
-                }}
-              >
-                {item.dday}
-              </div>
-
+              <strong style={{ color: "#5b8cff", fontSize: 24 }}>{index + 1}</strong>
+              <span>
+                <b style={{ display: "block", fontSize: 12 }}>{item.title}</b>
+                <small style={{ color: "#a8b2c8", fontSize: 10, fontWeight: 800 }}>{item.desc}</small>
+                <small style={{ display: "block", color: item.status === "orange" ? "#ff9658" : "#61dcc8", fontSize: 10, fontWeight: 900 }}>{item.date}</small>
+              </span>
+              <span className={`badge ${item.status}`}>{item.deadline}</span>
             </div>
+          ))}
+        </div>
+      </section>
 
+      <section>
+        <h2 className="section-title" style={{ margin: "20px 0 8px" }}>
+          즐겨찾기 한 혜택
+        </h2>
+        {favorites.length === 0 ? (
+          <div className="empty-box">아직 즐겨찾기 한 혜택이 없어요.</div>
+        ) : (
+          <div className="benefit-list">
+            {favorites.map((item) => (
+              <BenefitCard isFavorite item={item} key={item.id} onToggleFavorite={onToggleFavorite} />
+            ))}
           </div>
-
-        ))
-
-      )}
-
-      <BottomNav />
-
-    </div>
-
+        )}
+      </section>
+    </main>
   );
-
 }

@@ -1,234 +1,146 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { CheckCircle2, ChevronLeft, Share2, Star } from "lucide-react";
+import { useMemo, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import PhoneTop from "../components/PhoneTop";
+import benefits from "../data/benefits";
+import { applyBenefit, hasAppliedBenefit, getFavoriteIds, toggleFavoriteId } from "../utils/storage";
 
-function Detail() {
+export default function Detail() {
   const navigate = useNavigate();
-  const location = useLocation();
-
-  const item = location.state;
-
-  if (!item) {
-    return (
-      <div
-        style={{
-          padding: "40px",
-          fontSize: "20px",
-          fontWeight: "700",
-        }}
-      >
-        잘못된 접근입니다.
-      </div>
-    );
-  }
+  const { id } = useParams();
+  const item = useMemo(() => benefits.find((benefit) => benefit.id === id) || benefits[0], [id]);
+  const [summary, setSummary] = useState(false);
+  const [favoriteIds, setFavoriteIds] = useState(getFavoriteIds());
+  const [applied, setApplied] = useState(hasAppliedBenefit(item.id));
+  const [showApplied, setShowApplied] = useState(false);
+  const isFavorite = favoriteIds.includes(item.id);
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "#F7F9FC",
-        paddingBottom: "120px",
-      }}
-    >
-      {/* 상단 */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "14px",
-          padding: "28px 24px 12px",
-        }}
-      >
-        <button
-          onClick={() => navigate(-1)}
-          style={{
-            border: "none",
-            background: "transparent",
-            fontSize: "32px",
-            cursor: "pointer",
-            color: "#1F2A44",
-          }}
-        >
-          ←
+    <main className="screen" style={{ paddingBottom: 150 }}>
+      <PhoneTop />
+      <div className="topbar">
+        <button className="icon-button" onClick={() => navigate(-1)} type="button">
+          <ChevronLeft size={26} />
         </button>
-
-        <h1
-          style={{
-            margin: 0,
-            fontSize: "52px",
-            fontWeight: "800",
-            color: "#1F2A44",
-          }}
-        >
-          신청하기
-        </h1>
-      </div>
-
-      {/* 카드 */}
-      <div
-        style={{
-          margin: "24px",
-          padding: "34px",
-          borderRadius: "36px",
-          background: "#fff",
-          border: "2px solid #E3E8F5",
-        }}
-      >
-        <div
-          style={{
-            fontSize: "34px",
-            fontWeight: "800",
-            color: "#1F2A44",
-            marginBottom: "18px",
-            lineHeight: 1.3,
-          }}
-        >
-          {item.title}
-        </div>
-
-        <div
-          style={{
-            fontSize: "20px",
-            color: "#AAB2C8",
-            fontWeight: "700",
-            marginBottom: "42px",
-          }}
-        >
-          {item.desc}
-        </div>
-
-        <div
-          style={{
-            fontSize: "18px",
-            color: "#AAB2C8",
-            fontWeight: "700",
-            marginBottom: "10px",
-          }}
-        >
-          신청 기간
-        </div>
-
-        <div
-          style={{
-            fontSize: "32px",
-            color: "#FF964F",
-            fontWeight: "800",
-            lineHeight: 1.4,
-          }}
-        >
-          {item.date}
-        </div>
-      </div>
-
-      {/* 지원 내용 */}
-      <div
-        style={{
-          margin: "24px",
-          padding: "34px",
-          borderRadius: "36px",
-          background: "#fff",
-          border: "2px solid #E3E8F5",
-        }}
-      >
-        <div
-          style={{
-            fontSize: "34px",
-            fontWeight: "800",
-            color: "#1F2A44",
-            marginBottom: "26px",
-          }}
-        >
-          지원 내용
-        </div>
-
-        <div
-          style={{
-            color: "#4B5675",
-            fontSize: "18px",
-            lineHeight: 2,
-            fontWeight: "700",
-          }}
-        >
-          • 월 최대 지원금 지급
-          <br />
-          • 온라인 간편 신청 가능
-          <br />
-          • 정부24 연동 서류 제출 지원
-          <br />
-          • 신청 상태 실시간 확인 가능
-        </div>
-      </div>
-
-      {/* 필요 서류 */}
-      <div
-        style={{
-          margin: "24px",
-          padding: "34px",
-          borderRadius: "36px",
-          background: "#fff",
-          border: "2px solid #E3E8F5",
-        }}
-      >
-        <div
-          style={{
-            fontSize: "34px",
-            fontWeight: "800",
-            color: "#1F2A44",
-            marginBottom: "26px",
-          }}
-        >
-          필요 서류
-        </div>
-
-        <div
-          style={{
-            color: "#4B5675",
-            fontSize: "18px",
-            lineHeight: 2,
-            fontWeight: "700",
-          }}
-        >
-          • 주민등록등본
-          <br />
-          • 소득금액증명원
-          <br />
-          • 재학증명서
-          <br />
-          • 통장 사본
-        </div>
-      </div>
-
-      {/* 하단 버튼 */}
-      <div
-        style={{
-          position: "fixed",
-          bottom: "20px",
-          left: "50%",
-          transform: "translateX(-50%)",
-          width: "calc(100% - 40px)",
-          maxWidth: "390px",
-          zIndex: 100,
-        }}
-      >
+        <h1 className="topbar-title">혜택 상세</h1>
         <button
+          onClick={() => setSummary((value) => !value)}
           style={{
-            width: "100%",
-            height: "60px",
-            border: "none",
-            borderRadius: "20px",
-            background:
-              "linear-gradient(135deg,#5B8CFF,#67DCC8)",
+            justifySelf: "end",
+            width: 60,
+            height: 34,
+            border: 0,
+            borderRadius: 999,
+            background: "#5b8cff",
             color: "#fff",
-            fontSize: "22px",
-            fontWeight: "700",
-            cursor: "pointer",
-            boxShadow:
-              "0 10px 25px rgba(91,140,255,0.25)",
+            fontSize: 10,
+            fontWeight: 900,
           }}
+          type="button"
         >
-          신청하기
+          {summary ? "요약" : "상세"}
         </button>
       </div>
-    </div>
+
+      <article className="detail-card">
+        <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
+          <div>
+            <h2 className="detail-title">{item.title}</h2>
+            <p className="detail-subtitle">{item.desc}</p>
+          </div>
+          <div style={{ display: "flex", gap: 12 }}>
+            <button className={`star-button ${isFavorite ? "active" : ""}`} onClick={() => setFavoriteIds(toggleFavoriteId(item.id))} type="button">
+              <Star fill={isFavorite ? "currentColor" : "none"} size={24} />
+            </button>
+            <button className="star-button" type="button">
+              <Share2 size={23} />
+            </button>
+          </div>
+        </div>
+
+        <span className={`badge ${item.status}`}>{item.deadline}</span>
+        <div className="tag-row">
+          {item.tags.map((tag) => (
+            <span className="small-tag" key={tag}>
+              {tag}
+            </span>
+          ))}
+        </div>
+
+        <p className="benefit-date-label">신청 기간</p>
+        <p className="benefit-date" style={{ fontSize: 12 }}>
+          {item.date}
+        </p>
+        <div className="divider" />
+
+        {summary ? (
+          <>
+            <h3 className="detail-section-title">지원내용</h3>
+            <p className="detail-copy">{item.support}</p>
+            <h3 className="detail-section-title" style={{ marginTop: 18 }}>
+              지원 규모(명)
+            </h3>
+            <p className="detail-copy">270명 선착순</p>
+            <h3 className="detail-section-title" style={{ marginTop: 18 }}>
+              신청자격
+            </h3>
+            <p className="detail-copy">{item.qualification.join("\n")}</p>
+          </>
+        ) : (
+          <>
+            <h3 className="detail-section-title">정책번호</h3>
+            <p className="detail-copy">{item.policyNo}</p>
+            <h3 className="detail-section-title" style={{ marginTop: 18 }}>
+              정책분야
+            </h3>
+            <p className="detail-copy">{item.agency}</p>
+            <h3 className="detail-section-title" style={{ marginTop: 18 }}>
+              지원내용
+            </h3>
+            <p className="detail-copy">{item.support}</p>
+            <p className="detail-copy" style={{ marginTop: 12 }}>
+              {item.detail}
+            </p>
+            <h3 className="detail-section-title" style={{ marginTop: 18 }}>
+              사업 운영 기간
+            </h3>
+            <p className="detail-copy">2026년 1월 1일 - 2026년 12월 31일</p>
+          </>
+        )}
+      </article>
+
+      <div className="detail-fixed-action">
+        <button
+          className={applied ? "primary-button" : "mint-button"}
+          onClick={() => {
+            applyBenefit(item.id);
+            setApplied(true);
+            setShowApplied(true);
+          }}
+          type="button"
+        >
+          {applied ? "신청 완료" : "신청하기"}
+          {applied ? <CheckCircle2 size={14} style={{ verticalAlign: "middle", marginLeft: 4 }} /> : null}
+        </button>
+      </div>
+
+      {showApplied && (
+        <div className="modal-backdrop">
+          <div className="modal-card">
+            <h2 className="modal-title">
+              신청이 완료되었어요
+              <br />
+              마감 알림도 함께 등록했어요.
+            </h2>
+            <p className="modal-text">{item.title} 신청 내역은 기록과 캘린더에서 확인할 수 있습니다.</p>
+            <div className="modal-actions" style={{ gridTemplateColumns: "1fr" }}>
+              <button onClick={() => setShowApplied(false)} type="button">
+                확인
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </main>
   );
 }
-
-export default Detail;

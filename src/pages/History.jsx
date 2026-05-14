@@ -30,9 +30,7 @@ function History() {
     <div
       style={{
         width: "100%",
-        maxWidth: "430px",
-
-        minHeight: "100vh",
+        minHeight: "100dvh",
 
         margin: "0 auto",
 

@@ -1,436 +1,193 @@
-import {
-  useEffect,
-  useState
-} from "react";
+import { CheckCircle2, ChevronLeft, ChevronRight, FileText, Link2, Settings, Star, UserRound } from "lucide-react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import PhoneTop from "../components/PhoneTop";
+import { connectGov24, getGov24Data, getProfile } from "../utils/storage";
 
-import {
-  useNavigate
-} from "react-router-dom";
-
-function Profile() {
-
-  const navigate =
-    useNavigate();
-
-  const [profile, setProfile]
-    = useState({});
-
-  const [isConnecting,
-    setIsConnecting]
-      = useState(false);
-
-  const [isConnected,
-    setIsConnected]
-      = useState(false);
-
-  const [showConsent,
-    setShowConsent]
-      = useState(false);
-
-  useEffect(() => {
-
-    const savedProfile =
-      JSON.parse(
-        localStorage.getItem(
-          "profile"
-        )
-      );
-
-    if (savedProfile) {
-
-      setProfile(savedProfile);
-
-      if (
-        savedProfile.govConnected
-      ) {
-
-        setIsConnected(true);
-
-      }
-
-    }
-
-  }, []);
-
-  const connectGov24 = () => {
-
-    setShowConsent(false);
-
-    setIsConnecting(true);
-
-    setTimeout(() => {
-
-      const updatedProfile = {
-
-        ...profile,
-
-        govConnected: true,
-
-      };
-
-      localStorage.setItem(
-
-        "profile",
-
-        JSON.stringify(
-          updatedProfile
-        )
-
-      );
-
-      setProfile(
-        updatedProfile
-      );
-
-      setIsConnecting(false);
-
-      setIsConnected(true);
-
-    }, 2500);
-
-  };
+export default function Profile() {
+  const navigate = useNavigate();
+  const profile = getProfile();
+  const [gov24Data, setGov24Data] = useState(getGov24Data());
+  const [showConsent, setShowConsent] = useState(false);
 
   const logout = () => {
-
-    localStorage.removeItem(
-      "isLogin"
-    );
-
-    navigate("/login");
-
+    localStorage.removeItem("isLogin");
+    navigate("/");
   };
 
   return (
+    <main className="screen">
+      <PhoneTop />
+      <div className="topbar">
+        <button className="icon-button" onClick={() => navigate(-1)} type="button">
+          <ChevronLeft size={26} />
+        </button>
+        <h1 className="topbar-title">프로필</h1>
+        <span />
+      </div>
 
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "#F5F6FB",
-        maxWidth: "430px",
-        margin: "0 auto",
-        padding:
-          "24px 20px 120px",
-        boxSizing: "border-box",
-      }}
-    >
-
-      <h1
-        style={{
-          fontSize: "32px",
-          fontWeight: "900",
-          color: "#1F2A44",
-          marginBottom: "24px",
-        }}
-      >
-        프로필
-      </h1>
-
-      <div
-        style={{
-          background: "white",
-          borderRadius: "28px",
-          padding: "28px",
-          boxShadow:
-            "0 4px 14px rgba(0,0,0,0.05)",
-        }}
-      >
-
+      <section className="header-row" style={{ justifyContent: "flex-start", marginTop: 18 }}>
         <div
           style={{
-            width: "82px",
-            height: "82px",
+            width: 62,
+            height: 62,
             borderRadius: "50%",
-            background:
-              "linear-gradient(135deg,#5B8CFF,#63E6BE)",
-            color: "white",
+            background: "linear-gradient(135deg,#5b8cff,#65ddc6)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            fontSize: "30px",
-            fontWeight: "900",
-            marginBottom: "20px",
+            color: "#fff",
           }}
         >
-          {profile?.name?.charAt(0)}
+          <UserRound size={38} />
         </div>
-
-        <h2
-          style={{
-            fontSize: "28px",
-            color: "#1F2A44",
-            marginBottom: "18px",
-          }}
-        >
-          {profile?.name}
-        </h2>
-
-        <p style={infoStyle}>
-          이메일:
-          {profile?.email}
-        </p>
-
-        <p style={infoStyle}>
-          나이:
-          {profile?.age}
-        </p>
-
-        <p style={infoStyle}>
-          지역:
-          {profile?.region}
-        </p>
-
-        <p style={infoStyle}>
-          소득 분위:
-          {profile?.income}
-        </p>
-
-        <p style={infoStyle}>
-          학교:
-          {profile?.school}
-        </p>
-
-        {
-
-          profile?.govConnected && (
-
-            <div
-              style={{
-                marginTop: "18px",
-                padding: "14px",
-                borderRadius: "16px",
-                background:
-                  "#E8FFF3",
-                color: "#17A34A",
-                fontWeight: "700",
-                fontSize: "14px",
-              }}
-            >
-              정부24 연동 완료
-            </div>
-
-          )
-
-        }
-
-        <button
-          onClick={() =>
-            navigate(
-              "/edit-profile"
-            )
-          }
-          style={mainButton}
-        >
-          프로필 수정
+        <div style={{ flex: 1 }}>
+          <h2 style={{ margin: 0, fontSize: 17, fontWeight: 900 }}>{profile.name || "성결 멋사 님"}</h2>
+          <p style={{ margin: "4px 0 0", color: "#a8b2c8", fontSize: 12, fontWeight: 800 }}>{profile.education || "대학생"}</p>
+        </div>
+        <button className="icon-button" type="button">
+          <Settings size={21} />
         </button>
+      </section>
 
-        <button
-          onClick={() =>
-            setShowConsent(true)
-          }
-          disabled={
-            isConnecting ||
-            isConnected
-          }
-          style={{
-            ...mainButton,
-
-            marginTop: "14px",
-          }}
-        >
-
-          {
-
-            isConnecting
-
-              ? "정부24 연동중..."
-
-              : isConnected
-
-              ? "정부24 연동 완료"
-
-              : "정부24 연동"
-
-          }
-
-        </button>
-
-        <button
-          onClick={logout}
-          style={{
-            width: "100%",
-            height: "54px",
-            border: "none",
-            borderRadius: "18px",
-            background: "#FF5D5D",
-            color: "white",
-            fontSize: "15px",
-            fontWeight: "700",
-            cursor: "pointer",
-            marginTop: "14px",
-          }}
-        >
-          로그아웃
-        </button>
-
-      </div>
-
-      {
-
-        showConsent && (
-
-          <div
-            style={{
-              position: "fixed",
-              inset: 0,
-              background:
-                "rgba(0,0,0,0.4)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              padding: "20px",
-              zIndex: 1000,
-            }}
-          >
-
-            <div
-              style={{
-                background: "white",
-                borderRadius: "24px",
-                padding: "24px",
-                width: "100%",
-                maxWidth: "340px",
-              }}
-            >
-
-              <h3
-                style={{
-                  fontSize: "22px",
-                  marginBottom: "16px",
-                  color: "#1F2A44",
-                }}
-              >
-                개인정보 동의
-              </h3>
-
-              <p
-                style={{
-                  color: "#666",
-                  lineHeight: "1.6",
-                  fontSize: "14px",
-                }}
-              >
-                정부24 연동을 위해
-                개인정보 제공 및
-                정책 분석에
-                동의하시겠습니까?
-              </p>
-
-              <div
-                style={{
-                  display: "flex",
-                  gap: "10px",
-                  marginTop: "24px",
-                }}
-              >
-
-                <button
-                  onClick={() =>
-                    setShowConsent(false)
-                  }
-                  style={cancelButton}
-                >
-                  취소
-                </button>
-
-                <button
-                  onClick={connectGov24}
-                  style={agreeButton}
-                >
-                  동의
-                </button>
-
-              </div>
-
-            </div>
-
+      <section className="summary-card" style={{ marginTop: 22 }}>
+        <div className="section-head" style={{ margin: "0 0 12px" }}>
+          <h2 className="section-title">내 상황 요약</h2>
+          <button className="muted-link" onClick={() => navigate("/edit-profile")} type="button">
+            수정하기 ›
+          </button>
+        </div>
+        {[
+          ["나이", profile.age],
+          ["거주지역", profile.region],
+          ["소득 기준", profile.income],
+          ["학력", profile.education],
+          ["전공", profile.major],
+          ["취업상태", profile.job],
+          ["특화분야", profile.special],
+          ["추가사항", profile.extra],
+        ].map(([label, value]) => (
+          <div className="summary-row" key={label}>
+            <span>{label}</span>
+            <strong>{value || "-"}</strong>
           </div>
+        ))}
+      </section>
 
-        )
+      <section className="panel" style={{ marginTop: 18 }}>
+        <div className="section-head" style={{ margin: 0 }}>
+          <h2 className="section-title">정부24 연동</h2>
+          {gov24Data.connected ? (
+            <span style={{ color: "#65ddc6", fontSize: 11, fontWeight: 900, display: "inline-flex", alignItems: "center", gap: 4 }}>
+              <CheckCircle2 size={15} /> 연동 완료
+            </span>
+          ) : (
+            <button className="muted-link" onClick={() => setShowConsent(true)} style={{ color: "#5b8cff" }} type="button">
+              연동하기 ›
+            </button>
+          )}
+        </div>
+        <p style={{ margin: "10px 0 12px", color: "#7d879d", fontSize: 11, lineHeight: 1.55, fontWeight: 800 }}>
+          이용자 동의 후 필요한 서류와 관심 조건을 확인해 AI 추천에 반영합니다.
+        </p>
+        {gov24Data.connected ? (
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {gov24Data.documents.map((doc) => (
+              <div
+                key={doc.id}
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "28px 1fr auto",
+                  gap: 8,
+                  alignItems: "center",
+                  padding: "9px 0",
+                  borderTop: "1px solid #edf1f7",
+                }}
+              >
+                <FileText size={20} color="#5b8cff" />
+                <span>
+                  <strong style={{ display: "block", fontSize: 12 }}>{doc.title}</strong>
+                  <small style={{ color: "#a8b2c8", fontSize: 10, fontWeight: 800 }}>{doc.usedFor}</small>
+                </span>
+                <span className={`badge ${doc.status === "추가 필요" ? "orange" : "mint"}`} style={{ width: 58 }}>
+                  {doc.status}
+                </span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <button className="primary-button" onClick={() => setShowConsent(true)} type="button">
+            <Link2 size={15} style={{ verticalAlign: "middle" }} /> 정부24로 서류 불러오기
+          </button>
+        )}
+      </section>
 
-      }
+      <section style={{ marginTop: 22 }}>
+        <h2 className="section-title" style={{ marginBottom: 12 }}>
+          관리
+        </h2>
+        <div className="panel" style={{ padding: 0, overflow: "hidden" }}>
+          {[
+            [UserRound, "내 정보", "내 상황 정보 관리하기"],
+            [Star, "추천 기준", "혜택 추천 기준 관리하기"],
+          ].map(([Icon, title, text]) => (
+            <button
+              key={title}
+              onClick={() => navigate("/edit-profile")}
+              style={{
+                width: "100%",
+                border: 0,
+                background: "#fff",
+                display: "grid",
+                gridTemplateColumns: "38px 1fr 24px",
+                gap: 8,
+                alignItems: "center",
+                padding: "17px 16px",
+                textAlign: "left",
+              }}
+              type="button"
+            >
+              <Icon size={22} />
+              <span>
+                <strong style={{ display: "block", fontSize: 13 }}> {title}</strong>
+                <small style={{ color: "#a8b2c8", fontSize: 11, fontWeight: 800 }}>{text}</small>
+              </span>
+              <ChevronRight size={20} color="#a8b2c8" />
+            </button>
+          ))}
+        </div>
+      </section>
 
-    </div>
+      <button className="orange-button" onClick={logout} style={{ marginTop: 24 }} type="button">
+        로그아웃
+      </button>
 
+      {showConsent && (
+        <div className="modal-backdrop">
+          <div className="modal-card">
+            <h2 className="modal-title">
+              정부24 정보를 불러와
+              <br />
+              맞춤 추천에 사용할까요?
+            </h2>
+            <p className="modal-text">주민등록등본, 재학증명서, 소득분위 확인서 등 필요한 서류 상태를 확인합니다.</p>
+            <div className="modal-actions">
+              <button onClick={() => setShowConsent(false)} type="button">
+                아니요
+              </button>
+              <button
+                onClick={() => {
+                  setGov24Data(connectGov24(profile));
+                  setShowConsent(false);
+                }}
+                type="button"
+              >
+                동의하고 연동
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </main>
   );
-
 }
-
-const infoStyle = {
-
-  fontSize: "15px",
-
-  color: "#555",
-
-  marginBottom: "10px",
-
-};
-
-const mainButton = {
-
-  width: "100%",
-
-  height: "54px",
-
-  border: "none",
-
-  borderRadius: "18px",
-
-  background:
-    "linear-gradient(135deg,#5B8CFF,#63E6BE)",
-
-  color: "white",
-
-  fontSize: "15px",
-
-  fontWeight: "700",
-
-  cursor: "pointer",
-
-  marginTop: "28px",
-
-};
-
-const cancelButton = {
-
-  flex: 1,
-
-  height: "48px",
-
-  border: "none",
-
-  borderRadius: "14px",
-
-  background: "#ECECEC",
-
-};
-
-const agreeButton = {
-
-  flex: 1,
-
-  height: "48px",
-
-  border: "none",
-
-  borderRadius: "14px",
-
-  background:
-    "linear-gradient(135deg,#5B8CFF,#63E6BE)",
-
-  color: "white",
-
-  fontWeight: "700",
-
-};
-
-export default Profile;

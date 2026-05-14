@@ -62,9 +62,8 @@ function Signup() {
 
     <div
       style={{
-        minHeight: "100vh",
+        minHeight: "100dvh",
         background: "#F5F6FB",
-        maxWidth: "430px",
         margin: "0 auto",
         padding: "24px 20px 40px",
         boxSizing: "border-box",
