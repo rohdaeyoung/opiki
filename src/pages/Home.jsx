@@ -1,7 +1,6 @@
 import { Bell, CalendarDays, SlidersHorizontal, User } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import logo from "../assets/logo1.svg";
 import BenefitCard from "../components/BenefitCard";
 import PhoneTop from "../components/PhoneTop";
 import benefits, { categories } from "../data/benefits";
@@ -36,7 +35,21 @@ export default function Home() {
     <main className="screen">
       <PhoneTop />
       <div className="header-row">
-        <img className="logo" src={logo} alt="Opiki" />
+        <h1
+          aria-label="Opiki"
+          style={{
+            margin: 0,
+            fontSize: 26,
+            fontWeight: 900,
+            letterSpacing: "-0.5px",
+            background: "linear-gradient(135deg,#5B8CFF 0%,#65DDC6 100%)",
+            WebkitBackgroundClip: "text",
+            backgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            color: "transparent",
+            lineHeight: 1,
+          }}
+        >Opiki</h1>
         <div className="header-icons">
           <CalendarDays size={22} onClick={() => navigate("/calendar")} />
           <Bell size={21} onClick={() => navigate("/notification")} />

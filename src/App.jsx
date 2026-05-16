@@ -17,7 +17,7 @@ import BottomNav from "./components/BottomNav";
 
 function Layout() {
   const location = useLocation();
-  const hideBottomNav = ["/login", "/signup", "/edit-profile"].includes(location.pathname);
+  const hideBottomNav = ["/login", "/signup", "/edit-profile", "/ai"].includes(location.pathname);
 
   return (
     <div className="app-shell">
