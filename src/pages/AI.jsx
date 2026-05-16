@@ -134,12 +134,16 @@ export default function AI() {
   return (
     <main
       style={{
-        position: "absolute",
-        inset: 0,
+        width: "100%",
+        maxWidth: 430,
+        height: "100dvh",
+        maxHeight: "100dvh",
+        margin: "0 auto",
         background: "#f6f8fc",
         display: "flex",
         flexDirection: "column",
         overflow: "hidden",
+        paddingTop: "env(safe-area-inset-top)",
       }}
     >
       <PhoneTop />
@@ -206,7 +210,7 @@ export default function AI() {
           minHeight: 0,
           overflowY: "auto",
           WebkitOverflowScrolling: "touch",
-          padding: `12px 16px calc(${INPUT_BAR_HEIGHT}px + env(safe-area-inset-bottom))`,
+          padding: "12px 16px 12px",
           display: "flex",
           flexDirection: "column",
           gap: 10,
@@ -303,20 +307,15 @@ export default function AI() {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* 입력 바: BottomNav 바로 위에 딱 붙게 */}
+      {/* 입력 바: flex 흐름 마지막 칸 — 컬럼 안에서만 표시 */}
       <div
         style={{
-          position: "fixed",
-          left: 0,
-          right: 0,
-          bottom: 0,
-          paddingBottom: "calc(10px + env(safe-area-inset-bottom))",
-          padding: "10px 16px",
+          flexShrink: 0,
+          padding: "10px 16px calc(10px + env(safe-area-inset-bottom))",
           background: "#f6f8fc",
           borderTop: "1px solid #e6ebf3",
           display: "flex",
           gap: 10,
-          zIndex: 60,
         }}
       >
         <input
