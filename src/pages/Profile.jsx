@@ -2,13 +2,42 @@ import { CheckCircle2, ChevronLeft, ChevronRight, FileText, Link2, Settings, Sta
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PhoneTop from "../components/PhoneTop";
-import { connectGov24, getGov24Data, getProfile } from "../utils/storage";
+import { connectGov24, disconnectGov24, getGov24Data, getProfile, isLoggedIn } from "../utils/storage";
 
 export default function Profile() {
   const navigate = useNavigate();
-  const profile = getProfile();
+  const loggedIn = isLoggedIn();
+  // 사용자가 직접 입력한 프로필이 localStorage 에 있을 때만 진짜 데이터로 간주
+  const rawProfile = (typeof window !== "undefined"
+    ? JSON.parse(localStorage.getItem("profile") || "null")
+    : null);
+  const emptyProfile = {
+    nickname: "",
+    name: "",
+    age: "",
+    region: "",
+    income: "",
+    education: "",
+    school: "",
+    major: "",
+    job: "",
+    special: "",
+    extra: "",
+  };
+  const hasRealProfile = loggedIn && rawProfile;
+  const profile = hasRealProfile ? rawProfile : emptyProfile;
   const [gov24Data, setGov24Data] = useState(getGov24Data());
   const [showConsent, setShowConsent] = useState(false);
+  const [showDisconnect, setShowDisconnect] = useState(false);
+  const [showLoginAlert, setShowLoginAlert] = useState(false);
+
+  const handleConnectClick = () => {
+    if (!loggedIn) {
+      setShowLoginAlert(true);
+      return;
+    }
+    setShowConsent(true);
+  };
 
   const logout = () => {
     localStorage.removeItem("isLogin");
@@ -42,8 +71,8 @@ export default function Profile() {
           <UserRound size={38} />
         </div>
         <div style={{ flex: 1 }}>
-          <h2 style={{ margin: 0, fontSize: 17, fontWeight: 900 }}>{profile.name || "성결 멋사 님"}</h2>
-          <p style={{ margin: "4px 0 0", color: "#a8b2c8", fontSize: 12, fontWeight: 800 }}>{profile.education || "대학생"}</p>
+          <h2 style={{ margin: 0, fontSize: 17, fontWeight: 900 }}>{hasRealProfile ? (profile.name || "님") : "님"}</h2>
+          <p style={{ margin: "4px 0 0", color: "#a8b2c8", fontSize: 12, fontWeight: 800 }}>{hasRealProfile ? (profile.education || "") : ""}</p>
         </div>
         <button className="icon-button" type="button">
           <Settings size={21} />
@@ -78,11 +107,16 @@ export default function Profile() {
         <div className="section-head" style={{ margin: 0 }}>
           <h2 className="section-title">정부24 연동</h2>
           {gov24Data.connected ? (
-            <span style={{ color: "#65ddc6", fontSize: 11, fontWeight: 900, display: "inline-flex", alignItems: "center", gap: 4 }}>
-              <CheckCircle2 size={15} /> 연동 완료
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 10 }}>
+              <span style={{ color: "#65ddc6", fontSize: 11, fontWeight: 900, display: "inline-flex", alignItems: "center", gap: 4 }}>
+                <CheckCircle2 size={15} /> 연동 완료
+              </span>
+              <button className="muted-link" onClick={() => setShowDisconnect(true)} style={{ color: "#ff8c5a", fontSize: 11, fontWeight: 900, background: "transparent", border: 0 }} type="button">
+                연동 끊기
+              </button>
             </span>
           ) : (
-            <button className="muted-link" onClick={() => setShowConsent(true)} style={{ color: "#5b8cff" }} type="button">
+            <button className="muted-link" onClick={handleConnectClick} style={{ color: "#5b8cff" }} type="button">
               연동하기 ›
             </button>
           )}
@@ -116,7 +150,7 @@ export default function Profile() {
             ))}
           </div>
         ) : (
-          <button className="primary-button" onClick={() => setShowConsent(true)} type="button">
+          <button className="primary-button" onClick={handleConnectClick} type="button">
             <Link2 size={15} style={{ verticalAlign: "middle" }} /> 정부24로 서류 불러오기
           </button>
         )}
@@ -183,6 +217,58 @@ export default function Profile() {
                 type="button"
               >
                 동의하고 연동
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showDisconnect && (
+        <div className="modal-backdrop">
+          <div className="modal-card">
+            <h2 className="modal-title">
+              정부24 연동을
+              <br />
+              해제할까요?
+            </h2>
+            <p className="modal-text">연동을 끊으면 서류 확인 정보가 삭제되고 AI 추천에서도 빠집니다. 언제든 다시 연동할 수 있어요.</p>
+            <div className="modal-actions">
+              <button onClick={() => setShowDisconnect(false)} type="button">
+                아니요
+              </button>
+              <button
+                onClick={() => {
+                  setGov24Data(disconnectGov24());
+                  setShowDisconnect(false);
+                }}
+                type="button"
+              >
+                연동 해제
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showLoginAlert && (
+        <div className="modal-backdrop">
+          <div className="modal-card">
+            <h2 className="modal-title">
+              로그인이 필요해요
+            </h2>
+            <p className="modal-text">정부24 연동은 로그인 후에만 가능합니다. 먼저 로그인을 진행해주세요.</p>
+            <div className="modal-actions">
+              <button onClick={() => setShowLoginAlert(false)} type="button">
+                나중에
+              </button>
+              <button
+                onClick={() => {
+                  setShowLoginAlert(false);
+                  navigate("/login");
+                }}
+                type="button"
+              >
+                로그인하러 가기
               </button>
             </div>
           </div>

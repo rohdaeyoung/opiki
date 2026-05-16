@@ -1,5 +1,18 @@
 {
   "appId": "kr.opiki.app",
   "appName": "Opiki",
-  "webDir": "dist"
+  "webDir": "dist",
+  "ios": {
+    "contentInset": "always",
+    "limitsNavigationsToAppBoundDomains": false
+  },
+  "server": {
+    "iosScheme": "opiki",
+    "cleartext": true,
+    "allowNavigation": [
+      "localhost",
+      "127.0.0.1",
+      "*.opiki.kr"
+    ]
+  }
 }

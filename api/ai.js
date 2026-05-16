@@ -1,41 +1,26 @@
-import express from "express";
-import cors from "cors";
-import dotenv from "dotenv";
+// Vercel Serverless Function: POST /api/ai
+// 동일 코드를 로컬 dev (npm run server) 와 프로덕션 (Vercel) 양쪽에서 재사용
 import OpenAI from "openai";
 
-/* global process */
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-dotenv.config();
+export default async function handler(req, res) {
+  // CORS (Capacitor iOS WebView 포함 모든 출처 허용)
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-const app = express();
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+  if (req.method !== "POST") {
+    return res.status(405).json({ reply: "POST 만 허용됩니다." });
+  }
 
-// 개발 + Capacitor iOS WebView(capacitor://localhost, opiki://localhost) 모두 허용
-app.use(
-  cors({
-    origin: true,
-    credentials: true,
-  }),
-);
-
-app.use(express.json({ limit: "1mb" }));
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
-app.get("/health", (_req, res) => {
-  res.json({
-    ok: true,
-    hasKey: !!process.env.OPENAI_API_KEY,
-  });
-});
-
-app.post("/ai", async (req, res) => {
   try {
     if (!process.env.OPENAI_API_KEY) {
       return res.status(500).json({
-        reply:
-          "서버에 OPENAI_API_KEY가 설정되지 않았어요. .env 파일을 확인해주세요.",
+        reply: "서버에 OPENAI_API_KEY 가 설정되지 않았어요. Vercel 환경변수를 확인해주세요.",
       });
     }
 
@@ -64,7 +49,6 @@ app.post("/ai", async (req, res) => {
 정부24 연동: ${gov24?.connected ? "연동됨" : "미연동"}
 관심 분야: ${(gov24?.interests || []).join(", ") || "-"}`;
 
-    // 이전 대화 이력 (최근 8개로 잘라서 토큰 절약)
     const trimmedHistory = Array.isArray(history) ? history.slice(-8) : [];
     const historyMessages = trimmedHistory
       .filter((m) => m && (m.role === "user" || m.role === "ai") && m.text)
@@ -85,23 +69,17 @@ app.post("/ai", async (req, res) => {
     });
 
     const reply = completion.choices?.[0]?.message?.content?.trim() || "잠시 후 다시 시도해주세요.";
-
-    res.json({ reply });
+    return res.status(200).json({ reply });
   } catch (error) {
-    console.error("[/ai] error:", error?.message || error);
+    console.error("[/api/ai] error:", error?.message || error);
     const status = error?.status || 500;
-    res.status(status).json({
+    return res.status(status).json({
       reply:
         status === 401
           ? "OpenAI 인증 실패: API 키를 확인해주세요."
           : status === 429
             ? "OpenAI 사용량 한도에 걸렸어요. 잠시 후 다시 시도해주세요."
-            : "AI 응답을 가져오지 못했어요. 네트워크나 서버 상태를 확인해주세요.",
+            : "AI 응답을 가져오지 못했어요.",
     });
   }
-});
-
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`AI 서버 실행중 :${PORT} (key=${process.env.OPENAI_API_KEY ? "OK" : "MISSING"})`);
-});
+}

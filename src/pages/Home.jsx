@@ -46,7 +46,7 @@ export default function Home() {
 
       {loggedIn ? (
         <button className="user-link" onClick={() => navigate("/profile")} type="button">
-          {profile.nickname || "성결 멋사"}님 ›
+          {profile.nickname?.trim() || profile.name?.trim().replace(/\s*님$/, "") || "성결 멋사"}님 ›
         </button>
       ) : (
         <button className="login-link" onClick={() => navigate("/login")} type="button">

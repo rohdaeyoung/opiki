@@ -66,6 +66,17 @@ export function connectGov24(profile) {
   return data;
 }
 
+export function disconnectGov24() {
+  localStorage.removeItem("gov24Data");
+  return {
+    connected: false,
+    consentAt: "",
+    interests: [],
+    documents: [],
+    missingDocuments: [],
+  };
+}
+
 export function isLoggedIn() {
   return localStorage.getItem("isLogin") === "true";
 }
@@ -98,4 +109,71 @@ export function applyBenefit(id) {
 
 export function hasAppliedBenefit(id) {
   return getAppliedBenefitIds().includes(id);
+}
+
+/* ---------------- AI 채팅 저장 ---------------- */
+const CHAT_KEY = "aiChatHistory";
+
+export function getChatHistory() {
+  return JSON.parse(localStorage.getItem(CHAT_KEY) || "null") || [];
+}
+
+export function saveChatHistory(messages) {
+  try {
+    localStorage.setItem(CHAT_KEY, JSON.stringify(messages));
+  } catch (error) {
+    console.warn("채팅 저장 실패", error);
+  }
+}
+
+export function clearChatHistory() {
+  localStorage.removeItem(CHAT_KEY);
+}
+
+/* ---------------- 알림 저장 ---------------- */
+const NOTIFICATION_KEY = "appNotifications";
+
+export function getNotifications() {
+  return JSON.parse(localStorage.getItem(NOTIFICATION_KEY) || "null") || [];
+}
+
+export function addNotification(notification) {
+  const list = getNotifications();
+  // id 가 같으면 중복 추가 방지
+  if (notification.id && list.some((item) => item.id === notification.id)) return list;
+  const next = [
+    {
+      id: notification.id || `n-${Date.now()}`,
+      title: notification.title || "",
+      text: notification.text || "",
+      badge: notification.badge || "",
+      starred: !!notification.starred,
+      category: notification.category || "공지",
+      createdAt: notification.createdAt || new Date().toISOString(),
+    },
+    ...list,
+  ];
+  localStorage.setItem(NOTIFICATION_KEY, JSON.stringify(next));
+  return next;
+}
+
+export function clearNotifications() {
+  localStorage.removeItem(NOTIFICATION_KEY);
+}
+
+/* 신청한 혜택에 대한 마감 알림 자동 등록 */
+export function ensureAppliedNotifications(allBenefits) {
+  const appliedIds = getAppliedBenefitIds();
+  appliedIds.forEach((id) => {
+    const benefit = allBenefits.find((item) => item.id === id);
+    if (!benefit) return;
+    addNotification({
+      id: `applied-${id}`,
+      title: benefit.title,
+      text: `신청이 등록되었어요. 마감일(${benefit.endDate || benefit.date}) 알림을 켰어요.`,
+      badge: benefit.deadline,
+      starred: true,
+      category: "마감 임박",
+    });
+  });
 }
