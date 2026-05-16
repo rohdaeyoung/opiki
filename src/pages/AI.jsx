@@ -69,6 +69,20 @@ export default function AI() {
 
     const recommended = getRecommendedBenefits(profile, gov24Data, currentQuestion).filter((b) => b.score > 0);
 
+    // 키 없으면 OpenAI 호출 스킵 → 로컬 추천만 사용 (깔끔)
+    if (useLocalOnly) {
+      const localReply = makeAiReply(currentQuestion, profile, gov24Data);
+      setMessages((prev) => {
+        const added = [...prev, { role: "ai", type: "text", text: localReply }];
+        if (recommended.length > 0) {
+          added.push({ role: "ai", type: "benefits", items: recommended.slice(0, 3) });
+        }
+        return added;
+      });
+      setSending(false);
+      return;
+    }
+
     try {
       const aiReply = await askAi({
         question: currentQuestion,
@@ -85,13 +99,10 @@ export default function AI() {
         return added;
       });
     } catch (error) {
+      // 네트워크/서버 오류여도 사용자에게 ⚠️ 안 보이게, 그냥 로컬 추천으로 응답
       const fallback = makeAiReply(currentQuestion, profile, gov24Data);
       setMessages((prev) => {
-        const added = [
-          ...prev,
-          { role: "ai", type: "text", text: `⚠️ ${error.message || "AI 서버에 연결하지 못했어요."}` },
-          { role: "ai", type: "text", text: fallback },
-        ];
+        const added = [...prev, { role: "ai", type: "text", text: fallback }];
         if (recommended.length > 0) {
           added.push({ role: "ai", type: "benefits", items: recommended.slice(0, 3) });
         }
@@ -111,10 +122,14 @@ export default function AI() {
 
   const statusBanner = (() => {
     if (serverStatus.ok === null) return null;
-    if (!serverStatus.ok) return { bg: "#fff3e6", color: "#c2410c", text: `AI 서버 연결 안됨 · 로컬 추천으로 응답` };
-    if (!serverStatus.hasKey) return { bg: "#fff3e6", color: "#c2410c", text: "OPENAI_API_KEY 없음 · .env 확인" };
-    return { bg: "#e8f6ee", color: "#15803d", text: "AI 서버 연결됨 · 실시간 GPT 응답" };
+    if (serverStatus.ok && serverStatus.hasKey) {
+      return { bg: "#e8f6ee", color: "#15803d", text: "● AI 추천 · 실시간 GPT 응답" };
+    }
+    // 키가 없거나 서버 미가동 → 로컬 추천 모드 (긍정적 톤)
+    return { bg: "#eef4ff", color: "#1d4ed8", text: "● AI 추천 모드 · 프로필 기반 추천" };
   })();
+  // 키 없을 땐 askAi 호출 자체를 스킵해서 ⚠️ 에러 메시지가 채팅에 안 뜨도록
+  const useLocalOnly = serverStatus.ok === false || serverStatus.hasKey === false;
 
   return (
     <main
