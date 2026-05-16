@@ -203,19 +203,26 @@ export default function AI() {
         )}
       </div>
 
-      {/* 채팅 영역 */}
+      {/* 채팅 영역 - 메시지가 항상 아래부터 쌓이는 메신저 스타일 */}
       <div
         style={{
           flex: 1,
           minHeight: 0,
           overflowY: "auto",
           WebkitOverflowScrolling: "touch",
-          padding: "12px 16px 12px",
           display: "flex",
           flexDirection: "column",
-          gap: 10,
         }}
       >
+        <div
+          style={{
+            marginTop: "auto",
+            padding: "12px 16px 12px",
+            display: "flex",
+            flexDirection: "column",
+            gap: 10,
+          }}
+        >
         {messages.map((msg, index) => {
           if (msg.type === "benefits") {
             return (
@@ -304,7 +311,8 @@ export default function AI() {
             </div>
           </div>
         )}
-        <div ref={messagesEndRef} />
+          <div ref={messagesEndRef} />
+        </div>
       </div>
 
       {/* 입력 바: flex 흐름 마지막 칸 — 컬럼 안에서만 표시 */}
