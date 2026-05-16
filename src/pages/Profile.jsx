@@ -30,6 +30,18 @@ export default function Profile() {
   const [showConsent, setShowConsent] = useState(false);
   const [showDisconnect, setShowDisconnect] = useState(false);
   const [showLoginAlert, setShowLoginAlert] = useState(false);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
+
+  const resetAll = () => {
+    try {
+      localStorage.clear();
+    } catch (error) {
+      console.warn("초기화 실패", error);
+    }
+    setShowResetConfirm(false);
+    // 즉시 홈으로 이동 + 새로고침 효과를 위해 location 사용
+    window.location.assign("/");
+  };
 
   const handleConnectClick = () => {
     if (!loggedIn) {
@@ -196,6 +208,24 @@ export default function Profile() {
         로그아웃
       </button>
 
+      <button
+        onClick={() => setShowResetConfirm(true)}
+        style={{
+          marginTop: 12,
+          width: "100%",
+          padding: "14px 16px",
+          background: "transparent",
+          color: "#dc2626",
+          border: "1px solid #fecaca",
+          borderRadius: 14,
+          fontSize: 13,
+          fontWeight: 900,
+        }}
+        type="button"
+      >
+        모든 데이터 초기화
+      </button>
+
       {showConsent && (
         <div className="modal-backdrop">
           <div className="modal-card">
@@ -244,6 +274,29 @@ export default function Profile() {
                 type="button"
               >
                 연동 해제
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showResetConfirm && (
+        <div className="modal-backdrop">
+          <div className="modal-card">
+            <h2 className="modal-title">
+              앱 데이터를
+              <br />
+              모두 초기화할까요?
+            </h2>
+            <p className="modal-text">
+              로그인 상태, 프로필, 즐겨찾기, 신청 내역, AI 채팅 기록, 알림, 정부24 연동 정보가 모두 삭제됩니다. 되돌릴 수 없어요.
+            </p>
+            <div className="modal-actions">
+              <button onClick={() => setShowResetConfirm(false)} type="button">
+                취소
+              </button>
+              <button onClick={resetAll} type="button">
+                초기화
               </button>
             </div>
           </div>
